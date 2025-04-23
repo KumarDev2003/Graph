@@ -1,0 +1,67 @@
+Question :- https://leetcode.com/problems/number-of-enclaves/description/
+
+class Solution {
+public:
+    int numEnclaves(vector<vector<int>>& grid) {
+        int m = grid.size();
+        int n = grid[0].size();
+        queue<pair<int, int>> q;
+        vector<vector<int>> visit(m, vector<int>(n, 0));
+        // First col
+        for(int i=0; i<m; i++){
+            if(grid[i][0] == 1){
+                grid[i][0] = -1;
+                visit[i][0] = -1;
+                q.push({i, 0});
+            }
+        }
+        // Last col
+        for(int i=0; i<m; i++){
+            if(grid[i][n-1] == 1){
+                grid[i][n-1] = -1;
+                visit[i][n-1] = -1;
+                q.push({i, n-1});
+            }
+        }
+        // First row 
+        for(int i=0; i<n; i++){
+            if(grid[0][i] == 1){
+                grid[0][i] = -1;
+                visit[0][i] = -1;
+                q.push({0, i});
+            }
+        }
+        // Last row 
+        for(int i=0; i<n; i++){
+            if(grid[m-1][i] == 1){
+                grid[m-1][i] = -1;
+                visit[m-1][i] = -1;
+                q.push({m-1, i});
+            }
+        }
+        // Directions
+        vector<pair<int, int>> dir = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+        while(!q.empty()){
+            auto el = q.front();
+            q.pop();
+            int x = el.first;
+            int y = el.second;
+            for(auto it : dir){
+                int nx = x + it.first;
+                int ny = y + it.second;
+                if(nx >= 0 && nx < m && ny >= 0 && ny < n && visit[nx][ny] == 0 && grid[nx][ny] == 1){
+                    visit[nx][ny] = 1;
+                    grid[nx][ny] = -1;
+                    q.push({nx, ny});
+                }
+            }
+        }
+        int cnt = 0;
+        for(int i=0; i<m; i++){
+            for(int j=0; j<n; j++){
+                if(grid[i][j] == 1) cnt++;
+            }
+        }
+        return cnt;
+    }
+};
