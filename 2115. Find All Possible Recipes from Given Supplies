@@ -1,0 +1,69 @@
+Question :- https://leetcode.com/problems/find-all-possible-recipes-from-given-supplies/description/
+
+class Solution {
+public:
+    vector<string> findAllRecipes(vector<string>& recipes, vector<vector<string>>& ingredients, vector<string>& supplies) {
+        unordered_map<string, int> mp;
+        unordered_map<int, string> mpp;
+        unordered_set<string> st;
+        int idx = 0;
+        for(int i=0; i<recipes.size(); i++){
+            st.insert(recipes[i]);
+            if(mp.find(recipes[i]) == mp.end()){
+                mp[recipes[i]] = idx;
+                mpp[idx] = recipes[i];
+                idx++;
+            }
+        }
+        for(int i=0; i<supplies.size(); i++){
+            if(mp.find(supplies[i]) == mp.end()){
+                mp[supplies[i]] = idx;
+                mpp[idx] = supplies[i];
+                idx++;
+            }
+        }
+        int n = idx;
+        vector<vector<int>> adj(n);
+        vector<int> inDeg(n, 0);
+        for(int i=0; i<recipes.size(); i++){
+            int u = mp[recipes[i]];
+            auto arr = ingredients[i];
+            for(auto it : arr){
+                if(mp.find(it) == mp.end()){
+                    inDeg[u] = -1;
+                    continue;
+                }
+                int v = mp[it];
+                adj[v].push_back(u);
+                inDeg[u]++;
+            }
+        }
+        queue<int> q;
+        vector<int> ans;
+        for(int i=0; i<inDeg.size(); i++){
+            if(inDeg[i] == 0){
+                q.push(i);
+                ans.push_back(i);
+            }
+        }
+        while(!q.empty()){
+            int u = q.front();
+            q.pop();
+            for(auto & v : adj[u]){
+                inDeg[v]--;
+                if(inDeg[v] == 0){
+                    q.push(v);
+                    ans.push_back(v);
+                }
+            }
+        }
+        vector<string> arr;
+        for(auto it : ans){
+            string s = mpp[it];
+            if(st.find(s) != st.end()){
+                arr.push_back(s);
+            }
+        }
+        return arr;
+    }
+};
