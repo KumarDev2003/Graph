@@ -1,0 +1,42 @@
+Question :- https://leetcode.com/problems/word-ladder/description/
+
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        int n = beginWord.size();
+        unordered_set<string> st;
+        unordered_set<string> taken;
+        for(auto & it : wordList){
+            st.insert(it);
+        }
+        if(st.find(endWord) == st.end()) return 0;
+        queue<string> q;
+        q.push(beginWord);
+        taken.insert(beginWord);
+        int step = 0;
+        while(!q.empty()){
+            int size = q.size();
+            while(size){
+                string s = q.front();
+                q.pop();
+                if(s == endWord) return step+1;
+                string temp = s;
+                for(int idx=0; idx<n; idx++){
+                    char ch = s[idx];
+                    for(int i=0; i<26; i++){
+                        char newCh = i + 'a';
+                        s[idx] = newCh;
+                        if(st.find(s) != st.end() && taken.find(s) == taken.end()){
+                            taken.insert(s);
+                            q.push(s);
+                        }
+                        s = temp;
+                    }
+                }
+                size--;
+            }
+            step++;
+        }
+        return 0;
+    }
+};
